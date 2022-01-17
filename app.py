@@ -14,18 +14,18 @@ app.config['SECRET_KEY'] = SECRET_KEY
 
 @app.route("/login")
 def login():
-    return render_template("login.html", title="Login - NHS.UK")
+    return render_template("login.html", title="Login")
 
 
 @app.route("/register")
 def sign_up():
     Regform = RegistrationForm()
-    return render_template("register.html", title="Register - NHS.UK", form=Regform)
+    return render_template("register.html", title="Register", form=Regform)
 
 
 @app.route("/")
 def index():
-    return render_template("index.html", title="Skills Finder - NHS.UK")
+    return render_template("index.html", title="Skills Finder")
 
 
 @app.route("/update", methods=["GET", "POST"])
