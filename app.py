@@ -14,29 +14,29 @@ app.config['SECRET_KEY'] = SECRET_KEY
 
 @app.route("/login")
 def login():
-    return render_template("login.html", title="Asset management")
+    return render_template("login.html", title="Login - NHS.UK")
 
 
-@app.route("/signup")
+@app.route("/register")
 def sign_up():
     Regform = RegistrationForm()
-    return render_template("sign_up.html", title="Asset management", form=Regform)
+    return render_template("register.html", title="Register - NHS.UK", form=Regform)
 
 
 @app.route("/")
 def index():
-    return render_template("index.html", title="Asset management")
+    return render_template("index.html", title="Skills Finder - NHS.UK")
 
 
 @app.route("/update", methods=["GET", "POST"])
 def profile():
     if request.method == "POST":
         # Should be the name of the user logged in
-        return render_template("profile.html", title="Update User Profile")
+        return render_template("profile.html", title="Update User's Profile")
     else:
-        return render_template("profile.html", title="Update User Profile")
+        return render_template("profile.html", title="Update User's Profile")
 
 
 @app.route("/manage/account", methods=["GET"])
 def manage_account():
-    return render_template("manage_account.html", title="Manage Account")
+    return render_template("manage_account.html", title="Manage Your Profile")
