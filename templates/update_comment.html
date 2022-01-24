@@ -1,0 +1,35 @@
+{% extends "base.html" %} {% block main %}
+
+<div class="nhsuk-width-container">
+    <main class="nhsuk-main-wrapper" id="maincontent">
+        <div class="nhsuk-grid-row">
+            <div class="nhsuk-grid-column-two-thirds">
+                <fieldset class="nhsuk-fieldset">
+                    <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--xl">
+                        <h1 class="nhsuk-fieldset__heading">
+                            Update comments
+                        </h1>
+                    </legend>
+
+                    <div class="nhsuk-form-group">
+                        <label class="nhsuk-label" for="more-detail">
+                            Add additonal details?
+                        </label>
+                        <div class="nhsuk-hint" id="more-detail-hint">
+                            Don't include personal or financial information, eg your National Insurance number or credit
+                            card details.
+                        </div>
+                        <textarea class="nhsuk-textarea" id="more-detail" name="more-detail" rows="5"
+                            aria-describedby="more-detail-hint" spellcheck="false"></textarea>
+                    </div>
+
+                    <button class="nhsuk-button" type="submit">
+                        Submit
+                    </button>
+                </fieldset>
+            </div>
+        </div>
+    </main>
+</div>
+
+{% endblock %}

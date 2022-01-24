@@ -1,0 +1,38 @@
+{% extends "base.html" %} {% block main %}
+
+<div class="nhsuk-width-container">
+    <main class="nhsuk-main-wrapper" id="maincontent">
+        <div class="nhsuk-grid-row">
+            <div class="nhsuk-grid-column-two-thirds">
+                <fieldset class="nhsuk-fieldset">
+                    <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--xl">
+                        <h1 class="nhsuk-fieldset__heading">
+                            Add new skill?
+                        </h1>
+                    </legend>
+
+                    <div class="nhsuk-form-group">
+                        <label class="nhsuk-label" for="new_skill_name">
+                            Skill name E.g Terraform
+                        </label>
+                        <input class="nhsuk-input" id="new_skill_name" name="new_skill_name" type="text">
+                    </div>
+
+                    <div class="nhsuk-form-group">
+                        <label class="nhsuk-label" for="new_skill_rating">
+                            Skill rating E.g 3 (out of 5)
+                        </label>
+                        <input class="nhsuk-input" id="new_skill_rating" name="new_skill_rating" type="number" min="0"
+                            step="1">
+                    </div>
+
+                    <button class="nhsuk-button" type="submit">
+                        Submit
+                    </button>
+                </fieldset>
+            </div>
+        </div>
+    </main>
+</div>
+
+{% endblock %}
