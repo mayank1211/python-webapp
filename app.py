@@ -8,10 +8,23 @@ import os
 from time import sleep
 from flask import *
 from forms import RegistrationForm
+
 app = Flask(__name__)
 
-SECRET_KEY = os.urandom(32)
-app.config['SECRET_KEY'] = SECRET_KEY
+# Secrets config. Move it later to config.py file!
+from dotenv import load_dotenv
+load_dotenv()
+
+# SECRET_KEY = os.urandom(32)
+SECRET_KEY = environ.get('SECRET_KEY')
+FLASK_APP = environ.get('FLASK_APP')
+FLASK_ENV = environ.get('FLASK_ENV')
+
+# Database
+SQLALCHEMY_DATABASE_URI = environ.get("SQLALCHEMY_DATABASE_URI")
+SQLALCHEMY_ECHO = environ.get("SQLALCHEMY_ECHO")
+SQLALCHEMY_TRACK_MODIFICATIONS = environ.get("SQLALCHEMY_TRACK_MODIFICATIONS")
+
 
 
 @app.route("/login")
@@ -38,16 +51,20 @@ def profile(username):
 
 @app.route("/delete_skill/<username>", methods=["GET"])
 def delete_skill(username):
-    return redirect(url_for('.profile', username=username))
+    return redirect(url_for(".profile", username=username))
 
 
 @app.route("/update_skill/<username>", methods=["GET", "POST"])
 def update_skill(username):
     if request.method == "POST":
         # Should be the name of the user logged in
-        return render_template("update_skill.html", title="Update User's Profile", username=username)
+        return render_template(
+            "update_skill.html", title="Update User's Profile", username=username
+        )
     else:
-        return render_template("update_skill.html", title="Update User's Profile", username=username)
+        return render_template(
+            "update_skill.html", title="Update User's Profile", username=username
+        )
 
 
 @app.route("/update_comment/<username>", methods=["GET", "POST"])
@@ -55,9 +72,13 @@ def update_comment(username):
     username = username
     if request.method == "POST":
         # Should be the name of the user logged in
-        return render_template("update_comment.html", title="Update User's Profile", username=username)
+        return render_template(
+            "update_comment.html", title="Update User's Profile", username=username
+        )
     else:
-        return render_template("update_comment.html", title="Update User's Profile", username=username)
+        return render_template(
+            "update_comment.html", title="Update User's Profile", username=username
+        )
 
 
 @app.route("/manage/account", methods=["GET"])

@@ -11,21 +11,26 @@
                         </h1>
                     </legend>
 
-                    <div class="nhsuk-form-group">
-                        <label class="nhsuk-label" for="more-detail">
-                            Add additonal details?
-                        </label>
-                        <div class="nhsuk-hint" id="more-detail-hint">
-                            Don't include personal or financial information, eg your National Insurance number or credit
-                            card details.
-                        </div>
-                        <textarea class="nhsuk-textarea" id="more-detail" name="more-detail" rows="5"
-                            aria-describedby="more-detail-hint" spellcheck="false"></textarea>
-                    </div>
+                    <br>
 
-                    <button class="nhsuk-button" type="submit">
-                        Submit
-                    </button>
+                    <form action="/update_comment/{{ username }}" method="post">
+                        <div class="nhsuk-form-group">
+                            <label class="nhsuk-label" for="more-detail">
+                                Add additonal details?
+                            </label>
+                            <div class="nhsuk-hint" id="comments">
+                                Don't include personal or financial information, eg your National Insurance number or
+                                credit
+                                card details.
+                            </div>
+                            <textarea class="nhsuk-textarea" id="comments" name="comments" rows="5"
+                                aria-describedby="comments-hint" spellcheck="false"></textarea>
+                        </div>
+
+                        <button class="nhsuk-button" type="submit">
+                            Submit
+                        </button>
+                    </form>
                 </fieldset>
             </div>
         </div>
