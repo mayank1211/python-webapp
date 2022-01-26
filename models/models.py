@@ -1,38 +1,29 @@
 import datetime
 import sqlalchemy
-from flask import app
+from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey, DateTime
+from sqlalchemy import inspect
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///students.sqlite3'
-db = sqlalchemy(app)
+metadata = MetaData()
 
+users = Table('users', metadata,
+  Column('Id', Integer, primary_key=True, autoincrement=True),
+  Column('Name', String(50)),
+  Column('Email', String(100)),
+  Column('Password', String),
+  Column('Role', String(50)),
+  Column('CurrentTeam', String(50)),
+  Column('LastUpdatedAt', DateTime, default=datetime.datetime.utcnow),
+)
 
-# @login_manager.user_loader
-# def load_user(user_id):
-#     return User.query.get(user_id)
+skills = Table('skills', metadata,
+  Column('Id', Integer, primary_key=True, autoincrement=True),
+  Column('UserId', String, ForeignKey("users.Id")),
+  Column('SkillName', String(30), nullable=False),
+  Column('SkillRating', Integer, nullable=False)
+)
 
-class User(db.Model):
-    """User model"""
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    firstName = db.Column(db.String(100), nullable=False)
-    lastName = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(100), nullable=False, unique=True)
-    password = db.Column(db.String(100), nullable=False)
-    role = db.Column(db.String(100), nullable=True)
-    currentTeam = db.Column(db.String(50), nullable=True)
-    lastUpdatedAt = db.Column(
-        db.DateTime, default=datetime.utcnow, nullable=True)
-
-
-class Skills(db.Model):
-    """Skills model"""
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    authorId = db.Column(db.Integer, foreign_key=True)
-    skillName = db.Column(db.String(50), nullable=True)
-    skillRating = db.Column(db.Integer(5), nullable=True)
-
-
-class Comments(db.Model):
-    """Comments model"""
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    authorId = db.Column(db.Integer, foreign_key=True)
-    comments = db.Column(db.String(500), nullable=False)
+comments = Table('comments', metadata,
+  Column('Id', Integer, primary_key=True, autoincrement=True),
+  Column('UserId', Integer, ForeignKey("users.Id")),
+  Column('Comments', String(500), nullable=False)
+)

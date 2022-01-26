@@ -1,35 +1,79 @@
 # http://pycrud-app.herokuapp.com/account
 
-# Import the following the components from flask_login package (current_user, login_required, login_user, logout_user)
-# from flask_login import *
-# Import all the modules and features offered by flask
-from multiprocessing.connection import wait
 import os
-from time import sleep
-from flask import *
-from forms import RegistrationForm
-
-app = Flask(__name__)
+from dotenv import load_dotenv
+from flask import Flask
+# Import modules required to perform sqLite commands to create and fetch existing data from the sqlite flaskApp.db files
+from sqlalchemy import create_engine, select, insert, update, delete
+# from forms import RegistrationForm
+# from flask_login import *
+from models.models import *
 
 # Secrets config. Move it later to config.py file!
-from dotenv import load_dotenv
 load_dotenv()
+app = Flask(__name__)
 
-# SECRET_KEY = os.urandom(32)
-SECRET_KEY = environ.get('SECRET_KEY')
-FLASK_APP = environ.get('FLASK_APP')
-FLASK_ENV = environ.get('FLASK_ENV')
-
-# Database
-SQLALCHEMY_DATABASE_URI = environ.get("SQLALCHEMY_DATABASE_URI")
-SQLALCHEMY_ECHO = environ.get("SQLALCHEMY_ECHO")
-SQLALCHEMY_TRACK_MODIFICATIONS = environ.get("SQLALCHEMY_TRACK_MODIFICATIONS")
+# Password hashing.
+import bcrypt
+bcrypt.hashpw(os.getenv('Hashing_Password'), bcrypt.gensalt( 12 ))
 
 
+# Create a connection with the local sqlite database file.
+engine = create_engine('sqlite:///flaskApp.db', echo=False)
+# Check and create new tables with defined schema from Models/model.py file
+metadata.create_all(engine, checkfirst=True)
 
-@app.route("/login")
+# def do_insert():
+#     stmt = insert(users).values(
+#         Name='nathan', 
+#         Email='Arnold', 
+#         Password='2000-01-31',
+#         Role='2000-01-31',
+#         CurrentTeam='2000-01-31')
+    
+#     with engine.begin() as con:
+#         result = con.execute(stmt)
+#         x = result.inserted_primary_key['Id']
+#     return result.inserted_primary_key['Id']
+
+# def do_insert_skill(userId):
+#     stmt = insert(skills).values(
+#         UserId=userId,
+#         SkillName='SkillName', 
+#         SkillRating=1)
+    
+#     with engine.begin() as con:
+#         result = con.execute(stmt)
+#     return result.inserted_primary_key['Id']
+
+# def do_insert_comment(userId):
+#     stmt = insert(comments).values(
+#         UserId=userId,
+#         Comments='Id qui enim ipsum sit laboris reprehenderit ex dolore ullamco tempor consequat aliqua. Sint ut amet amet et laborum fugiat culpa cillum minim. Mollit dolor labore pariatur commodo laborum eiusmod ex. Veniam Lorem tempor sunt deserunt mollit non cillum commodo laboris do voluptate in. Qui officia eiusmod ut culpa eiusmod laborum sint officia esse dolor.')
+    
+#     with engine.begin() as con:
+#         result = con.execute(stmt)
+#     return result.inserted_primary_key['Id']
+
+# createdUser=do_insert()
+# do_insert_skill(createdUser)
+# do_insert_comment(createdUser)
+
+
+@app.route("/login", methods=["GET", "POST"])
 def login():
+    if request.method == "POST":
+        def get_hashed_password(plain_text_password):
+            # Hash a password for the first time
+            #   (Using bcrypt, the salt is saved into the hash itself)
+            return bcrypt.hashpw(plain_text_password, bcrypt.gensalt())
+
+        def check_password(plain_text_password, hashed_password):
+            # Check hashed password. Using bcrypt, the salt is saved into the hash itself
+            return bcrypt.checkpw(plain_text_password, hashed_password)
+
     return render_template("login.html", title="Login")
+
 
 
 @app.route("/register")
