@@ -1,0 +1,40 @@
+{% extends "base.html" %} {% block main %}
+
+<div class="nhsuk-width-container">
+    <main class="nhsuk-main-wrapper" id="maincontent">
+        <div class="nhsuk-grid-row">
+            <div class="nhsuk-grid-column-two-thirds">
+                <fieldset class="nhsuk-fieldset">
+                    <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--xl">
+                        <h1 class="nhsuk-fieldset__heading">
+                            Update comments
+                        </h1>
+                    </legend>
+
+                    <br>
+
+                    <form action="/update_comment/{{ username }}" method="post">
+                        <div class="nhsuk-form-group">
+                            <label class="nhsuk-label" for="more-detail">
+                                Add additonal details?
+                            </label>
+                            <div class="nhsuk-hint" id="comments">
+                                Don't include personal or financial information, eg your National Insurance number or
+                                credit
+                                card details.
+                            </div>
+                            <textarea class="nhsuk-textarea" id="comments" name="comments" rows="5"
+                                aria-describedby="comments-hint" spellcheck="false"></textarea>
+                        </div>
+
+                        <button class="nhsuk-button" type="submit">
+                            Submit
+                        </button>
+                    </form>
+                </fieldset>
+            </div>
+        </div>
+    </main>
+</div>
+
+{% endblock %}

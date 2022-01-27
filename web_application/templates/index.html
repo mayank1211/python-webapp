@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block main %}
+
+<style>
+    section,
+    aside {
+        background-color: white;
+        width: 50%;
+        height: 50%;
+        padding: 20px 20px 0 20px;
+        margin-top: 30px;
+    }
+
+    aside {
+        height: 357px;
+    }
+
+    h1 {
+        margin-bottom: 0;
+    }
+</style>
+
+<div class="nhsuk-width-container">
+    <main class="nhsuk-main-wrapper" id="maincontent">
+        <div class="nhsuk-grid-row">
+            <h1>{{ title }}</h1>
+            <div class="nhsuk-grid-column-one-thirds">
+                <div>
+                    <section style="float: left;">
+                        <img src="https://cdn.dribbble.com/users/3294839/screenshots/14567472/media/524efe16b803e0d913d725c120b0cb46.jpg?compress=1&resize=1600x1200&vertical=top"
+                            style="object-fit:cover; border-radius:50%; height:150px; width:150px">
+
+                        <p class="nhsuk-card__description">Mayank Patel</p>
+                        <p class="nhsuk-card__description">Role: Junior Developer (Web and Infrastructure)</p>
+                        <a class="nhsuk-button" href="/profile/1">
+                            View Profile
+                        </a>
+                    </section>
+                    <aside style="float: right;">
+                        <h3 class="nhsuk-card__description">
+                            Current team
+                        </h3>
+                        <p>Infra - DevOps</p>
+                        <h3 class="nhsuk-card__description">
+                            Current Skills
+                        </h3>
+                        <ul>
+                            <li>Terraform ⭐️⭐️⭐️⭐️⭐️</li>
+                            <li>ASP.Net ⭐️⭐️⭐️⭐️</li>
+                            <li>Python ⭐️⭐️</li>
+                            <li>Performance Testing ⭐️⭐️⭐️⭐️⭐️</li>
+                            <li>View more...</li>
+                        </ul>
+                    </aside>
+                </div>
+
+                <br><br><br><br><br>
+            </div>
+        </div>
+</div>
+</main>
+</div>
+
+{% endblock %}
