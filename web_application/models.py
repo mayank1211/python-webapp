@@ -54,22 +54,3 @@ class Comments(db.Model):
         Comments=self.Email
       )
 
-db.create_all()
-admin = Users(
-    Name="Nice", 
-    Email="Arnold", 
-    Password="Arnold",
-    Role="Arnold",
-    CurrentTeam="Arnold"
-)
-db.session.add(admin)
-db.session.commit()
-
-x = db.session.query(Users).filter_by(Name='Nice').first()
-
-comments = Comments(
-    UserId=x.Id, 
-    Comments="Lorem!"
-)
-db.session.add(comments)
-db.session.commit()

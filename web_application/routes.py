@@ -2,40 +2,59 @@ from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for
 from sqlalchemy import create_engine, select, insert, update, delete
 # Manual
-from web_application import app
+from web_application import app, db
+from web_application.models import Users
 
 # Password hashing.
 import os
 import bcrypt
-bcrypt.hashpw(os.getenv('Hashing_Password'), bcrypt.gensalt( 12 ))
+bcrypt.hashpw("password", bcrypt.gensalt(15))
+
+def check_password(plain_text_password, hashed_password):
+    # Check hashed password. Using bcrypt, the salt is saved into the hash itself
+    return bcrypt.checkpw(plain_text_password, hashed_password)
+def get_hashed_password(plain_text_password):
+    # Hash a password for the first time (Using bcrypt, the salt is saved into the hash itself)
+    return bcrypt.hashpw(plain_text_password, bcrypt.gensalt())
+
+
+# db.create_all()
+# admin = Users(
+#     Name="Nice", 
+#     Email="Arnold", 
+#     Password="Arnold",
+#     Role="Arnold",
+#     CurrentTeam="Arnold"
+# )
+# db.session.add(admin)
+# db.session.commit()
+
+# x = db.session.query(Users).filter_by(Name='Nice').first()
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        metadata.bind = engine
-
-        # result = users.query(users).filter(users.name=='nathan').first() 
-        # print(result)
-        # for row in result:
-        #     print(row.Id)
-            # result.close()
-
-#         def get_hashed_password(plain_text_password):
-#             # Hash a password for the first time
-#             #   (Using bcrypt, the salt is saved into the hash itself)
-#             return bcrypt.hashpw(plain_text_password, bcrypt.gensalt())
-
-#         def check_password(plain_text_password, hashed_password):
-#             # Check hashed password. Using bcrypt, the salt is saved into the hash itself
-#             return bcrypt.checkpw(plain_text_password, hashed_password)
-
+        userEmailInput = request.form.get("email")
+        
+        if (db.session.query(Users).filter_by(Email=userEmailInput).first() != "None"):
+            getStoredHashedKey = db.session.query(Users).filter_by(Email=userEmailInput).first()
+            isPasswordMatch = check_password(request.form.get("password"), getStoredHashedKey.Password)
+            if (isPasswordMatch == True):
+                print("Authenticated!")
+            else:
+                print("Not allowed!")
     return render_template("login.html", title="Login")
-
 
 
 @app.route("/register")
 def sign_up():
     Regform = RegistrationForm()
+    if request.method == "POST":
+        userEmailInput = request.form.get("email")
+    
+    if (db.session.query(Users).filter_by(Email=userEmailInput).first() != "None"):
+        print()
+
     return render_template("register.html", title="Register", form=Regform)
 
 @app.route("/")
