@@ -2,7 +2,7 @@ from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for
 from sqlalchemy import create_engine, select, insert, update, delete
 # Manual
-from web_application.__init__ import app, db
+from web_application import app
 
 # Password hashing.
 import os
@@ -14,10 +14,10 @@ def login():
     if request.method == "POST":
         metadata.bind = engine
 
-        result = users.query(users).filter(users.name=='nathan').first() 
-        print(result)
-        for row in result:
-            print(row.Id)
+        # result = users.query(users).filter(users.name=='nathan').first() 
+        # print(result)
+        # for row in result:
+        #     print(row.Id)
             # result.close()
 
 #         def get_hashed_password(plain_text_password):
