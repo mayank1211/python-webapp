@@ -36,60 +36,60 @@
                     style="object-fit:cover; border-radius:50%; height:150px; width:150px; margin-top: 50px;">
 
                 <aside style="float: right;">
-                    <p class="nhsuk-card__description_name">Mayank Patel</p>
-                    <p class="nhsuk-card__description_role">Role: Junior Developer (Web and Infrastructure)</p>
-                    <p class="nhsuk-card__description_team">Current team: Infra - DevOps</p>
+                    <p class="nhsuk-card__description_name">Name: {{ user.Name }}</p>
+                    <p class="nhsuk-card__description_role">Role: {{ user.Role }}</p>
+                    <p class="nhsuk-card__description_team">Current team: {{ user.CurrentTeam }}</p>
                 </aside>
 
                 <br> <br> <br>
 
                 <h3>Skills</h3>
 
-                <div>
-                    <p class="nhsuk-card__description">Terraform ⭐️⭐️⭐️
-                        <a style="float: right; display: inline-block;" class="nhsuk-action-link__link"
-                            href="/delete_skill/{{ username }}">
-                            <span class="nhsuk-action-link__text">Delete</span>
-                        </a>
-                    </p>
-                </div>
-
-                <div>
-                    <p class="nhsuk-card__description">Terraform ⭐️⭐️⭐️
-                        <a style="float: right; display: inline-block;" class="nhsuk-action-link__link"
-                            href="/delete_skill/{{ username }}">
-                            <span class="nhsuk-action-link__text">Delete</span>
-                        </a>
-                    </p>
-                </div>
-
-                <div>
-                    <p class="nhsuk-card__description">Terraform ⭐️⭐️⭐️
-                        <a style="float: right; display: inline-block;" class="nhsuk-action-link__link"
-                            href="/delete_skill/{{ username }}">
-                            <span class="nhsuk-action-link__text">Delete</span>
-                        </a>
-                    </p>
-                </div>
+                {% if not skills %}
+                    <p>Please add skills</p>
+                {% else %}
+                    {% for skill in skills %}
+                    <div>
+                        <p class="nhsuk-card__description">{{ skill.SkillName }} ⭐️⭐️⭐️
+                            <a style="float: right; display: inline-block;" class="nhsuk-action-link__link"
+                                href="/delete_skill/{{ user.Id }}/{{ skill.Id }}">
+                                <span class="nhsuk-action-link__text">Delete</span>
+                            </a>
+                        </p>
+                    </div>
+                    {% endfor %}
+                {% endif %}
 
                 <br>
 
-                <h3>Additional details</h3>
-                <p class="nhsuk-card__description">
-                    Sint aliquip ad ad qui adipisicing veniam veniam et consectetur cupidatat in qui proident
-                    aliquip. Aute ad aute sit Lorem. Pariatur dolor commodo proident eu irure mollit in aute tempor
-                    deserunt id nostrud sit adipisicing.
-                </p>
-
+                {% if comment %}
+                    <h3>Additional details</h3>
+                    <p class="nhsuk-card__description">
+                        {{ comment.Comments }}
+                    </p>
+                {% endif %}
+                
                 <div>
                     <a style="float: left; display: inline-block;" class="nhsuk-button"
-                        href="/update_skill/{{ username }}">
-                        <span class="nhsuk-action-link__text">Update Skill</span>
+                        href="/add_skill/{{ user.Id }}">
+                        <span class="nhsuk-action-link__text">         
+                            {% if not skills %}
+                                Add Skill
+                            {% else %}
+                                Update Skill
+                            {% endif %}
+                        </span>
                     </a>
 
                     <a style="float: right; display: inline-block;" class="nhsuk-button"
-                        href="/update_comment/{{ username }}">
-                        <span class="nhsuk-action-link__text">Update comments</span>
+                        href="/update_comment/{{ user.Id }}">
+                        <span class="nhsuk-action-link__text">
+                            {% if not comment %}
+                                Add Comments
+                            {% else %}
+                                Update Comments
+                            {% endif %}
+                        </span>
                     </a>
                 </div>
             </div>

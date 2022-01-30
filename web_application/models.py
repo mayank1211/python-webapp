@@ -2,11 +2,16 @@ import datetime
 import sqlalchemy
 from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey, DateTime
 from sqlalchemy import inspect
+from flask_login import UserMixin
+from web_application import app, db, login_manager
 
-from web_application import app, db
+@login_manager.user_loader
+def load_user(user_id):
+    return Users.query.get(user_id)
 
-class Users(db.Model):
+class Users(UserMixin, db.Model):
     """ User Model """
+    __tablename__ = "users"
     Id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     Name = db.Column(db.String(80), nullable=True)
     Email = db.Column(db.String(120), nullable=True)
@@ -15,42 +20,26 @@ class Users(db.Model):
     CurrentTeam = db.Column(db.String(100), nullable=True)
     LastUpdatedAt = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
-    def __repr__(self):
-      return self._repr(
-        Id=self.Id,
-        Name=self.Name,
-        Email=self.Email,
-        Password=self.Password,
-        Role=self.Role,
-        CurrentTeam=self.CurrentTeam,
-        LastUpdatedAt=self.LastUpdatedAt
-      )
+    def get_id(self):
+        """Return the user id to satisfy Flask-Login's requirements."""
+        return self.Id
+
+
 
 class Skills(db.Model):
     """ Skills Model """
+    __tablename__ = "skills"
     Id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     UserId = db.Column(db.Integer, db.ForeignKey('users.Id'), nullable=False)
     SkillName = db.Column(db.String(120), nullable=False)
     SkillRating = db.Column(db.Integer, nullable=False)
 
-    def __repr__(self):
-      return self._repr(
-        Id=self.Id,
-        UserId=self.Name,
-        SkillName=self.Email,
-        SkillRating=self.Password
-      )
-
 class Comments(db.Model):
     """ Comments Model """
+    __tablename__ = "comments"
     Id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     UserId = db.Column(db.Integer, db.ForeignKey('users.Id'), nullable=False)
     Comments = db.Column(db.String(120), nullable=True)
 
-    def __repr__(self):
-      return self._repr(
-        Id=self.Id,
-        UserId=self.Name,
-        Comments=self.Email
-      )
 
+db.create_all()
