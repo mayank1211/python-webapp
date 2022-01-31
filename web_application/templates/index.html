@@ -11,7 +11,6 @@
         padding: 20px 20px 0 20px;
         margin-top: 30px;
     }
-
     aside {
         height: 357px;
     }
@@ -19,7 +18,7 @@
     h1 {
         margin-bottom: 0;
     }
-</style>
+  </style>
 
 <div class="nhsuk-width-container">
     <main class="nhsuk-main-wrapper" id="maincontent">
@@ -33,7 +32,7 @@
                                 style="object-fit:cover; border-radius:50%; height:150px; width:150px">
 
                             <p class="nhsuk-card__description">{{ user.Name }}</p>
-                            <p class="nhsuk-card__description">Role: {{ user.Role }}</p>
+                            <p class="nhsuk-card__description">Role: {{ user.JobRole }}</p>
                             <a class="nhsuk-button" href="/profile/{{ user.Id }}">
                                 View Profile
                             </a>
@@ -47,10 +46,11 @@
                                 Current Skills
                             </h3>
                             <ul>
+                                {% set skill_sets_count = namespace(value=0) %}
                                 {% for skill in skills %}
-                                    {% if skill.UserId == user.Id %}
-                                        <li>{{ skill.SkillName }} å
-                                        </li>
+                                    {% if skill.UserId == user.Id and skill_sets_count.value < 5 %}
+                                        {% set skill_sets_count.value = skill_sets_count.value + 1 %}
+                                        <li>{{ skill.SkillName }}  - {{ skill.SkillRating }} Out of 5</li>
                                     {% endif %}
                                 {% endfor %}
                             </ul>

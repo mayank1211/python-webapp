@@ -37,7 +37,7 @@
 
                 <aside style="float: right;">
                     <p class="nhsuk-card__description_name">Name: {{ user.Name }}</p>
-                    <p class="nhsuk-card__description_role">Role: {{ user.Role }}</p>
+                    <p class="nhsuk-card__description_role">Role: {{ user.JobRole }}</p>
                     <p class="nhsuk-card__description_team">Current team: {{ user.CurrentTeam }}</p>
                 </aside>
 
@@ -50,7 +50,7 @@
                 {% else %}
                     {% for skill in skills %}
                     <div>
-                        <p class="nhsuk-card__description">{{ skill.SkillName }} ⭐️⭐️⭐️
+                        <p class="nhsuk-card__description">{{ skill.SkillName }} - {{ skill.SkillRating }} Out of 5
                             <a style="float: right; display: inline-block;" class="nhsuk-action-link__link"
                                 href="/delete_skill/{{ user.Id }}/{{ skill.Id }}">
                                 <span class="nhsuk-action-link__text">Delete</span>
@@ -68,30 +68,32 @@
                         {{ comment.Comments }}
                     </p>
                 {% endif %}
-                
-                <div>
-                    <a style="float: left; display: inline-block;" class="nhsuk-button"
-                        href="/add_skill/{{ user.Id }}">
-                        <span class="nhsuk-action-link__text">         
-                            {% if not skills %}
-                                Add Skill
-                            {% else %}
-                                Update Skill
-                            {% endif %}
-                        </span>
-                    </a>
 
-                    <a style="float: right; display: inline-block;" class="nhsuk-button"
-                        href="/update_comment/{{ user.Id }}">
-                        <span class="nhsuk-action-link__text">
-                            {% if not comment %}
-                                Add Comments
-                            {% else %}
-                                Update Comments
-                            {% endif %}
-                        </span>
-                    </a>
-                </div>
+                {% if user.Id == current_user.Id or current_user.UserRole == "Admin" %}
+                    <div>
+                        <a style="float: left; display: inline-block;" class="nhsuk-button"
+                            href="/add_skill/{{ user.Id }}">
+                            <span class="nhsuk-action-link__text">
+                                {% if not skills %}
+                                    Add Skill
+                                {% else %}
+                                    Update Skill
+                                {% endif %}
+                            </span>
+                        </a>
+
+                        <a style="float: right; display: inline-block;" class="nhsuk-button"
+                            href="/update_comment/{{ user.Id }}">
+                            <span class="nhsuk-action-link__text">
+                                {% if not comment %}
+                                    Add Comments
+                                {% else %}
+                                    Update Comments
+                                {% endif %}
+                            </span>
+                        </a>
+                    </div>
+                {% endif %}
             </div>
         </div>
 </div>

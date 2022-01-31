@@ -27,14 +27,16 @@
                                 aria-describedby="comments-hint" spellcheck="true">{{ currentComment.Comments }}</textarea>
                         </div>
 
-                        <button class="nhsuk-button" type="submit">
+                        {% if currentComment.Comments %}
+                            <a style="float: left; display: inline-block; background-color: #d5281b;" class="nhsuk-button"
+                                href="/delete_comment/{{ userId }}">
+                                    <span class="nhsuk-action-link__text">Delete comment</span>
+                            </a>
+                        {% endif %}
+
+                        <button class="nhsuk-button" type="submit" style="float: right;">
                             Submit
                         </button>
-
-                        <a style="float: right; display: inline-block; background-color: #d5281b;" class="nhsuk-button"
-                        href="/delete_comment/{{ userId }}">
-                            <span class="nhsuk-action-link__text">Delete comment</span>
-                        </a>
                     </form>
                 </fieldset>
             </div>
