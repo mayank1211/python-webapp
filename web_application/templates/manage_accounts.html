@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block main %}
+  <style>
+    .nhsuk-summary-list__actions {
+      width: 30%;
+    }
+  </style>
+  <div class="nhsuk-width-container">
+    <main class="nhsuk-main-wrapper" id="maincontent">
+      <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-one-thirds">
+          <h1>Manage Profiles</h1>
+
+          {% for user in users %}
+            <dl class="nhsuk-summary-list">
+              <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                  {{ user.Name }}
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                  {{ user.Email }}
+                </dd>
+                  <dd class="nhsuk-summary-list__actions">
+                    {% if user.UserRole == "Admin" %}
+                      <a href="/remove/admin/{{ user.Id }}">
+                          Remove admin privileges<span class="nhsuk-u-visually-hidden"> Remove admin privileges</span>
+                      </a>
+                    {% else %}
+                      <a href="/make/admin/{{ user.Id }}">
+                          Give admin privileges<span class="nhsuk-u-visually-hidden"> Give admin privileges</span>
+                      </a>
+                    {% endif %}
+
+                    <br>
+
+                    <a href="/delete/account/{{ user.Id }}">
+                      Delete user profile<span class="nhsuk-u-visually-hidden"> Delete user profile</span>
+                    </a>
+                  </dd>     
+              </div>
+            </dl>
+          {% endfor %}
+        </div>
+      </div>
+    </main>
+  </div>
+{% endblock %}
