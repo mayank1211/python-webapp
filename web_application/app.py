@@ -40,7 +40,7 @@ def unauthorized_callback():
 
 
 # Import routes and create_database_and_data function from models.py to create tables and users.
-import routes
-from models import create_database_and_data
+import web_application.routes
+from web_application.models import create_database_and_data
 # Call function from models.py file to required create tables and users
 create_database_and_data()

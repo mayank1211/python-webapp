@@ -3,7 +3,7 @@ import sqlalchemy
 from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey, DateTime
 from sqlalchemy import inspect
 from flask_login import UserMixin
-from app import app, db, login_manager
+from web_application.models import app, db, login_manager
 # Password hashing.
 from passlib.hash import sha256_crypt
 
