@@ -7,7 +7,7 @@ from sqlalchemy import create_engine, select, insert, update, delete
 # Password hashing.
 from passlib.hash import sha256_crypt
 # Import flask app and databaase config from run.py
-from run import app, db
+from app import app, db
 # Import all database models from models.py file to create and interact with data.
 from models import Users, Skills, Comments
 
