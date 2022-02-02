@@ -3,12 +3,15 @@ import sqlalchemy
 from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey, DateTime
 from sqlalchemy import inspect
 from flask_login import UserMixin
-from web_application import app, db, login_manager
-import bcrypt
+from run import app, db, login_manager
+# Password hashing.
+from passlib.hash import sha256_crypt
+
 
 @login_manager.user_loader
 def load_user(user_id):
     return Users.query.get(user_id)
+
 
 class Users(UserMixin, db.Model):
     """ User Model """
@@ -26,6 +29,7 @@ class Users(UserMixin, db.Model):
         """Return the user id to satisfy Flask-Login's requirements."""
         return self.Id
 
+
 class Skills(db.Model):
     """ Skills Model """
     __tablename__ = "skills"
@@ -34,6 +38,7 @@ class Skills(db.Model):
     SkillName = db.Column(db.String(120), nullable=False)
     SkillRating = db.Column(db.Integer, nullable=False)
 
+
 class Comments(db.Model):
     """ Comments Model """
     __tablename__ = "comments"
@@ -41,39 +46,56 @@ class Comments(db.Model):
     UserId = db.Column(db.Integer, db.ForeignKey('users.Id'), nullable=False)
     Comments = db.Column(db.String(120), nullable=True)
 
+
 def create_database_and_data():
     db.create_all()
 
-    user = db.session.query(Users).filter_by(Email="mayank.patel@admin.com").first()
+    adminUser = db.session.query(Users).filter_by(
+        Email="mayank.patel@admin.com").first()
 
-    if not user:
-        hashedUserPassword = bcrypt.hashpw("admin", bcrypt.gensalt(12))
+    standardUser = db.session.query(Users).filter_by(
+        Email="mayank.patel@standard.com").first()
+
+
+    if not standardUser:
         newUser = Users(
-            Name = "Mayank Patel",
-            Email = "mayank.patel@admin.com",
-            Password = hashedUserPassword,
-            JobRole = "Software Developer",
-            CurrentTeam = "NHS.UK - Service Profiles",
+            Name="Mayank Patel Standard",
+            Email="mayank.patel@standard.com",
+            Password=sha256_crypt.encrypt("standard"),
+            JobRole="Software Developer - Standard",
+            CurrentTeam="NHS.UK - Service Profiles",
         )
         db.session.add(newUser)
         db.session.commit()
 
-        registeredUser = db.session.query(Users).filter_by(Email="mayank.patel@admin.com").first()
-        
+    if not adminUser:
+        newUser = Users(
+            Name="Mayank Patel",
+            Email="mayank.patel@admin.com",
+            Password=sha256_crypt.encrypt("admin"),
+            JobRole="Software Developer",
+            CurrentTeam="NHS.UK - Service Profiles",
+            UserRole="Admin",
+        )
+        db.session.add(newUser)
+        db.session.commit()
+
+        registeredUser = db.session.query(Users).filter_by(
+            Email="mayank.patel@admin.com").first()
 
         skill_one = Skills(
-            UserId = registeredUser.Id, 
-            SkillName = "Kubernetes",
-            SkillRating = 5
+            UserId=registeredUser.Id,
+            SkillName="Kubernetes",
+            SkillRating=5
         )
         skill_two = Skills(
-            UserId = registeredUser.Id,
-            SkillName = "C# dotnet",
-            SkillRating = 4
+            UserId=registeredUser.Id,
+            SkillName="C# dotnet",
+            SkillRating=4
         )
         comment = Comments(
-            UserId = registeredUser.Id,
-            Comments = "I also do performance testing for NHS.UK on varies Covid and Non-Covid related services."
+            UserId=registeredUser.Id,
+            Comments="I also do performance testing for NHS.UK on varies Covid and Non-Covid related services."
         )
 
         db.session.add(comment)

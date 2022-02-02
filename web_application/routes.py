@@ -1,69 +1,85 @@
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask import Flask, render_template, request, redirect, url_for, session
 # Import login and authentication modules
 from flask_login import login_user, login_required, logout_user, LoginManager, current_user
 from sqlalchemy import create_engine, select, insert, update, delete
 # Password hashing.
-import bcrypt
-# Manual
-from web_application import app, db
-from web_application.models import Users, Skills, Comments
+from passlib.hash import sha256_crypt
+# Import flask app and databaase config from run.py
+from run import app, db
+# Import all database models from models.py file to create and interact with data.
+from models import Users, Skills, Comments
 
-# Complete
+
+def find_user_with_email(email):
+    return db.session.query(Users).filter_by(Email=email).first()
+
+
+def save_data(*args):
+    # Check if the any data parameter is passed.
+    if args:
+        for ar in args:
+            # If passed then add the data to db sessions before committing.
+            db.session.add(ar)
+    db.session.commit()
+
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     errorMessage = ""
     if request.method == "POST":
         # Check if the input email address matches any users email storeed in database, if not show error message to the user
-        if not db.session.query(Users).filter_by(Email=request.form.get("email")).first():
+        if not find_user_with_email(request.form.get("email_address")):
             errorMessage = "User does not exist, please register the user first."
         else:
-            # if matching email if found try sign in the user only if both email address and password matches.
-            userFound = db.session.query(Users).filter_by(Email=request.form.get("email")).first()
-            # Comparing the hashed password due to bcrypt.checkpw not working as expected.
-            if (userFound.Password == bcrypt.hashpw(request.form.get("password"), userFound.Password)):
-                login_user(userFound, True)
-                session.permanent = True
+            # If matching email is found try sign in the user, if both email address and password match.
+            userFound = find_user_with_email(request.form.get("email_address"))
+            # Comparing the hashed password with hashed input.
+            if sha256_crypt.verify(request.form.get("password"), userFound.Password):
+                login_user(userFound)
+                session.modified = True
+                app.permanent_session_lifetime = timedelta(minutes=1)
                 return redirect(url_for('.index'))
             else:
                 errorMessage = "Incorrect details, please check and try again later"
-    return render_template("login.html", title="Login", errorMessage=errorMessage)
+            print()
+    return render_template("login.html", title="Sign in", errorMessage=errorMessage)
 
-# Complete
+
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if current_user.is_authenticated:
         return redirect(url_for(".index"))
 
-    errorMessage=""
+    errorMessage = ""
     if request.method == "POST":
-        if db.session.query(Users).filter_by(Email=request.form.get("email_address")).first():
-            errorMessage="Email entered alread exists."
+        if find_user_with_email(request.form.get("email_address")):
+            errorMessage = "Email entered alread exists."
         else:
             # Create the standard user
             newUser = Users(
-                Name = request.form.get("full_name"),
-                Email = request.form.get("email_address"),
-                Password = bcrypt.hashpw(request.form.get("password"), bcrypt.gensalt(12)),
-                JobRole = request.form.get("role"),
-                CurrentTeam = request.form.get("current_team"),
+                Name=request.form.get("full_name"),
+                Email=request.form.get("email_address"),
+                Password=sha256_crypt.encrypt(request.form.get("password")),
+                JobRole=request.form.get("role"),
+                CurrentTeam=request.form.get("current_team"),
             )
-            db.session.add(newUser)
-            db.session.commit()
+            save_data(newUser)
             # Redirect the user to login page to sign with their details
             return redirect(url_for(".login"))
     # Render the register form page on the GET request
     return render_template("register.html", title="Register", errorMessage=errorMessage)
 
-# Complete
+
 @app.route("/logout")
 @login_required
 def logout():
     logout_user()
+    session.clear()
     return redirect(url_for('.login'))
 
-# Complete
+
 @app.route("/")
 @app.route("/index")
 @login_required
@@ -72,14 +88,14 @@ def index():
     skills = db.session.query(Skills).all()
     return render_template("index.html", title="Skills Finder", users=users, skills=skills)
 
-# Complete
+
 @app.route("/my/account/<userId>", methods=["GET"])
 @login_required
 def my_account(userId):
     user = db.session.query(Users).filter_by(Id=userId).first()
     return render_template("my_account.html", title="Manage Your Profile", user=user)
 
-# Complete
+
 @app.route("/update/account/<userId>", methods=["GET", "POST"])
 @login_required
 def update_account(userId):
@@ -89,27 +105,27 @@ def update_account(userId):
         user.Email = request.form.get("email_address")
         user.JobRole = request.form.get("role")
         user.CurrentTeam = request.form.get("current_team")
+        user.LastUpdatedAt = datetime.datetime.utcnow
 
         if request.form.get("password"):
-            hashedUserPassword = bcrypt.hashpw(request.form.get("password"), bcrypt.gensalt(12))
-            user.Password = hashedUserPassword
+            user.Password = sha256_crypt.encrypt(request.form.get("password"))
 
-        db.session.commit()
+        save_data()
         return redirect(url_for(".my_account", userId=userId))
     return render_template("update_my_profile.html", title="Update Your Profile", user=user)
 
-# Complete - (Redirect based on url coming from)
+
 @app.route("/delete/account/<userId>", methods=["GET"])
 @login_required
 def delete_profile(userId):
-    if userId == current_user.Id or current_user.UserRole == "Admin":
+    if int(userId) == current_user.Id or current_user.UserRole == "Admin":
         db.session.query(Users).filter_by(Id=userId).delete()
         db.session.query(Skills).filter_by(UserId=userId).delete()
         db.session.query(Comments).filter_by(UserId=userId).delete()
-        db.session.commit()
+        save_data()
     return redirect(url_for(".index"))
 
-# Complete
+
 @app.route("/manage/accounts", methods=["GET"])
 @login_required
 def manage_accounts():
@@ -119,7 +135,7 @@ def manage_accounts():
     users = db.session.query(Users).all()
     return render_template("manage_accounts.html", title="Manage Profile's", users=users)
 
-# Complete
+
 @app.route("/make/admin/<userId>", methods=["GET"])
 @login_required
 def make_admin(userId):
@@ -128,26 +144,24 @@ def make_admin(userId):
 
     user = db.session.query(Users).filter_by(Id=userId).first()
     user.UserRole = "Admin"
-    db.session.commit()
+    save_data()
     return redirect(url_for(".manage_accounts", userId=userId))
 
-# Complete
+
 @app.route("/remove/admin/<userId>", methods=["GET"])
 @login_required
 def remove_admin(userId):
     if current_user.UserRole != "Admin":
         return redirect(url_for('.index'))
 
-    print('ashdgjahsgdjasgd ', len(db.session.query(Users).filter_by(UserRole="Admin").all()))
-
     # check if more than 1 admin exists if not then redirect user to manage_accounts page without any chances
     if (len(db.session.query(Users).filter_by(UserRole="Admin").all()) > 1):
         user = db.session.query(Users).filter_by(Id=userId).first()
         user.UserRole = "Standard"
-        db.session.commit()
+        save_data()
     return redirect(url_for(".manage_accounts"))
 
-# Complete
+
 @app.route("/profile/<userId>", methods=["GET"])
 @login_required
 def profile(userId):
@@ -156,59 +170,59 @@ def profile(userId):
     comment = db.session.query(Comments).filter_by(UserId=userId).first()
     return render_template("profile.html", title="User's profile", user=user, skills=skills, comment=comment)
 
-# Complete
+
 @app.route("/add_skill/<userId>", methods=["GET", "POST"])
 @login_required
 def add_skill(userId):
     if request.method == "POST":
         skill = Skills(
-            UserId = userId, 
-            SkillName = request.form.get("new_skill_name"),
-            SkillRating = request.form.get("new_skill_rating")
+            UserId=userId,
+            SkillName=request.form.get("new_skill_name"),
+            SkillRating=request.form.get("new_skill_rating")
         )
-        db.session.add(skill)
-        db.session.commit()
+        save_data(skill)
         return redirect(url_for(".profile", userId=userId))
     else:
         return render_template("add_skill.html", title="Update User's Profile", userId=userId)
 
-# Complete
+
 @app.route("/delete_skill/<userId>/<skillId>", methods=["GET"])
 @login_required
 def delete_skill(userId, skillId):
     db.session.query(Skills).filter_by(Id=skillId).delete()
-    db.session.commit()
+    save_data()
     return redirect(url_for(".profile", userId=userId))
 
-# Complete (Adding and Updating existing comments)
+
 @app.route("/update_comment/<userId>", methods=["GET", "POST"])
 @login_required
 def update_comment(userId):
     if request.method == "POST":
         if not db.session.query(Comments).filter_by(UserId=userId).first():
             comment = Comments(
-                UserId = userId, 
-                Comments = request.form.get("comment")
+                UserId=userId,
+                Comments=request.form.get("comment")
             )
             db.session.add(comment)
         else:
             if request.form.get("comment"):
-                userComment = db.session.query(Comments).filter_by(UserId=userId).first()
+                userComment = db.session.query(
+                    Comments).filter_by(UserId=userId).first()
                 userComment.Comments = request.form.get("comment")
             else:
                 db.session.query(Comments).filter_by(UserId=userId).delete()
 
-        db.session.commit()
+        save_data()
         return redirect(url_for(".profile", userId=userId))
     else:
-        currentComment = db.session.query(Comments).filter_by(UserId=userId).first()
+        currentComment = db.session.query(
+            Comments).filter_by(UserId=userId).first()
         return render_template("update_comment.html", title="Update User's Comments", userId=userId, currentComment=currentComment)
 
-# Complete
+
 @app.route("/delete_comment/<userId>", methods=["GET"])
 @login_required
 def delete_comment(userId):
     db.session.query(Comments).filter_by(UserId=userId).delete()
-    db.session.commit()
+    save_data()
     return redirect(url_for(".profile", userId=userId))
-
