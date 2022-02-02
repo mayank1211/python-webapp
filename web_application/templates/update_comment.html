@@ -24,14 +24,15 @@
                                 card details.
                             </div>
                             <textarea class="nhsuk-textarea" id="comment" name="comment" rows="5"
-                                aria-describedby="comments-hint" spellcheck="true">{{ currentComment.Comments }}</textarea>
+                                aria-describedby="comments-hint"
+                                spellcheck="true">{{ currentComment.Comments }}</textarea>
                         </div>
 
                         {% if currentComment.Comments %}
-                            <a style="float: left; display: inline-block; background-color: #d5281b;" class="nhsuk-button"
-                                href="/delete_comment/{{ userId }}">
-                                    <span class="nhsuk-action-link__text">Delete comment</span>
-                            </a>
+                        <a style="float: left; display: inline-block; background-color: #d5281b;" class="nhsuk-button"
+                            href="/delete_comment/{{ userId }}">
+                            <span class="nhsuk-action-link__text">Delete comment</span>
+                        </a>
                         {% endif %}
 
                         <button class="nhsuk-button" type="submit" style="float: right;">

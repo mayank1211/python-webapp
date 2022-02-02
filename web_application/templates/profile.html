@@ -46,58 +46,56 @@
                 <h3>Skills</h3>
 
                 {% if not skills %}
-                    <p>Please add skills</p>
+                <p>Please add skills</p>
                 {% else %}
-                    {% for skill in skills %}
-                    <div>
-                        <p class="nhsuk-card__description">{{ skill.SkillName }} - {{ skill.SkillRating }} Out of 5
-                            <a style="float: right; display: inline-block;" class="nhsuk-action-link__link"
-                                href="/delete_skill/{{ user.Id }}/{{ skill.Id }}">
-                                <span class="nhsuk-action-link__text">Delete</span>
-                            </a>
-                        </p>
-                    </div>
-                    {% endfor %}
+                {% for skill in skills %}
+                <div>
+                    <p class="nhsuk-card__description">{{ skill.SkillName }} - {{ skill.SkillRating }} Out of 5
+                        <a style="float: right; display: inline-block;" class="nhsuk-action-link__link"
+                            href="/delete_skill/{{ user.Id }}/{{ skill.Id }}">
+                            <span class="nhsuk-action-link__text">Delete</span>
+                        </a>
+                    </p>
+                </div>
+                {% endfor %}
                 {% endif %}
 
                 <br>
 
                 {% if comment %}
-                    <h3>Additional details</h3>
-                    <p class="nhsuk-card__description">
-                        {{ comment.Comments }}
-                    </p>
+                <h3>Additional details</h3>
+                <p class="nhsuk-card__description">
+                    {{ comment.Comments }}
+                </p>
                 {% endif %}
 
                 {% if user.Id == current_user.Id or current_user.UserRole == "Admin" %}
-                    <div>
-                        <a style="float: left; display: inline-block;" class="nhsuk-button"
-                            href="/add_skill/{{ user.Id }}">
-                            <span class="nhsuk-action-link__text">
-                                {% if not skills %}
-                                    Add Skill
-                                {% else %}
-                                    Update Skill
-                                {% endif %}
-                            </span>
-                        </a>
+                <div>
+                    <a style="float: left; display: inline-block;" class="nhsuk-button" href="/add_skill/{{ user.Id }}">
+                        <span class="nhsuk-action-link__text">
+                            {% if not skills %}
+                            Add Skill
+                            {% else %}
+                            Update Skill
+                            {% endif %}
+                        </span>
+                    </a>
 
-                        <a style="float: right; display: inline-block;" class="nhsuk-button"
-                            href="/update_comment/{{ user.Id }}">
-                            <span class="nhsuk-action-link__text">
-                                {% if not comment %}
-                                    Add Comments
-                                {% else %}
-                                    Update Comments
-                                {% endif %}
-                            </span>
-                        </a>
-                    </div>
+                    <a style="float: right; display: inline-block;" class="nhsuk-button"
+                        href="/update_comment/{{ user.Id }}">
+                        <span class="nhsuk-action-link__text">
+                            {% if not comment %}
+                            Add Comments
+                            {% else %}
+                            Update Comments
+                            {% endif %}
+                        </span>
+                    </a>
+                </div>
                 {% endif %}
             </div>
         </div>
-</div>
-</main>
+    </main>
 </div>
 
 {% endblock %}
