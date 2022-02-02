@@ -5,8 +5,7 @@ import unittest
 from flask import abort, url_for
 from flask_testing import TestCase
 from bs4 import BeautifulSoup
-from app import app, db
-from models import create_database_and_data, Users, Skills, Comments
+from run import app, db
 
 class TestBase(TestCase):
 

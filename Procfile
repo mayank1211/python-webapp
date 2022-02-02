@@ -1,1 +1,1 @@
-web: gunicorn web_application.app:app
+web: sh -c 'cd ./web_application/ && gunicorn run:app'
