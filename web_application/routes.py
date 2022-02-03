@@ -105,7 +105,7 @@ def update_account(userId):
         user.Email = request.form.get("email_address")
         user.JobRole = request.form.get("role")
         user.CurrentTeam = request.form.get("current_team")
-        user.LastUpdatedAt = datetime.datetime.utcnow
+        user.LastUpdatedAt = datetime.utcnow()
 
         if request.form.get("password"):
             user.Password = sha256_crypt.encrypt(request.form.get("password"))
@@ -144,6 +144,7 @@ def make_admin(userId):
 
     user = db.session.query(Users).filter_by(Id=userId).first()
     user.UserRole = "Admin"
+    user.LastUpdatedAt = datetime.utcnow()
     save_data()
     return redirect(url_for(".manage_accounts", userId=userId))
 
@@ -158,6 +159,7 @@ def remove_admin(userId):
     if (len(db.session.query(Users).filter_by(UserRole="Admin").all()) > 1):
         user = db.session.query(Users).filter_by(Id=userId).first()
         user.UserRole = "Standard"
+        user.LastUpdatedAt = datetime.utcnow()
         save_data()
     return redirect(url_for(".manage_accounts"))
 
@@ -180,6 +182,7 @@ def add_skill(userId):
             SkillName=request.form.get("new_skill_name"),
             SkillRating=request.form.get("new_skill_rating")
         )
+        db.session.query(Users).filter_by(Id=userId).update({'LastUpdatedAt': datetime.utcnow()})
         save_data(skill)
         return redirect(url_for(".profile", userId=userId))
     else:
@@ -190,6 +193,7 @@ def add_skill(userId):
 @login_required
 def delete_skill(userId, skillId):
     db.session.query(Skills).filter_by(Id=skillId).delete()
+    db.session.query(Users).filter_by(Id=userId).update({'LastUpdatedAt': datetime.utcnow()})
     save_data()
     return redirect(url_for(".profile", userId=userId))
 
@@ -200,7 +204,7 @@ def update_comment(userId):
     if request.method == "POST":
         if not db.session.query(Comments).filter_by(UserId=userId).first():
             comment = Comments(
-                UserId=userId,
+                userId=userId,
                 Comments=request.form.get("comment")
             )
             db.session.add(comment)
@@ -211,7 +215,7 @@ def update_comment(userId):
                 userComment.Comments = request.form.get("comment")
             else:
                 db.session.query(Comments).filter_by(UserId=userId).delete()
-
+        db.session.query(Users).filter_by(Id=userId).update({'LastUpdatedAt': datetime.utcnow()})
         save_data()
         return redirect(url_for(".profile", userId=userId))
     else:
@@ -224,5 +228,6 @@ def update_comment(userId):
 @login_required
 def delete_comment(userId):
     db.session.query(Comments).filter_by(UserId=userId).delete()
+    db.session.query(Users).filter_by(Id=userId).update({'LastUpdatedAt': datetime.utcnow()})
     save_data()
     return redirect(url_for(".profile", userId=userId))
