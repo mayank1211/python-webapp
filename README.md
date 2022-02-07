@@ -46,3 +46,14 @@ To run application tests, ensure python package `nose2` is installed (automatica
 Run tests using command below in your terminal:
 `cd web_application && nose2`
 
+## Application Monitoring
+This application also has activity monitoring dashboard to view all activities such as amount of visits to specific page, API hits, any errors logs or compare report between two days or months.
+
+Visit: https://python-app-mayank.herokuapp.com/dashboard to view the dashboard.
+
+Default login details:
+- Login: admin
+- Password: admin
+
+![alt text](Img/Monitoring-Dashboard.png)
+
