@@ -36,7 +36,7 @@ def login():
             # If matching email is found try sign in the user, if both email address and password match.
             userFound = find_user_with_email(request.form.get("email_address"))
             # Comparing the hashed password with hashed input.
-            if sha256_crypt.verify(request.form.get("password"), userFound.Password):
+            if sha256_crypt.verify(request.form.get("password"), userFound.password):
                 login_user(userFound)
                 session.modified = True
                 app.permanent_session_lifetime = timedelta(minutes=1)
@@ -59,11 +59,11 @@ def register():
         else:
             # Create the standard user
             newUser = Users(
-                Name=request.form.get("full_name"),
-                Email=request.form.get("email_address"),
-                Password=sha256_crypt.encrypt(request.form.get("password")),
-                JobRole=request.form.get("role"),
-                CurrentTeam=request.form.get("current_team"),
+                name=request.form.get("full_name"),
+                email=request.form.get("email_address"),
+                password=sha256_crypt.encrypt(request.form.get("password")),
+                jobRole=request.form.get("role"),
+                currentTeam=request.form.get("current_team"),
             )
             save_data(newUser)
             # Redirect the user to login page to sign with their details
@@ -101,14 +101,14 @@ def my_account(userId):
 def update_account(userId):
     user = db.session.query(Users).filter_by(id=userId).first()
     if request.method == "POST":
-        user.Name = request.form.get("full_name")
-        user.Email = request.form.get("email_address")
-        user.JobRole = request.form.get("role")
-        user.CurrentTeam = request.form.get("current_team")
-        user.LastUpdatedAt = datetime.utcnow()
+        user.name = request.form.get("full_name")
+        user.email = request.form.get("email_address")
+        user.jobRole = request.form.get("role")
+        user.currentTeam = request.form.get("current_team")
+        user.lastUpdatedAt = datetime.utcnow()
 
         if request.form.get("password"):
-            user.Password = sha256_crypt.encrypt(request.form.get("password"))
+            user.password = sha256_crypt.encrypt(request.form.get("password"))
 
         save_data()
         return redirect(url_for(".my_account", userId=userId))
@@ -118,7 +118,7 @@ def update_account(userId):
 @app.route("/delete/account/<userId>", methods=["GET"])
 @login_required
 def delete_profile(userId):
-    if int(userId) == current_user.Id or current_user.UserRole == "Admin":
+    if int(userId) == current_user.id or current_user.userRole == "Admin":
         db.session.query(Users).filter_by(id=userId).delete()
         db.session.query(Skills).filter_by(userId=userId).delete()
         db.session.query(Comments).filter_by(userId=userId).delete()
@@ -129,7 +129,7 @@ def delete_profile(userId):
 @app.route("/manage/accounts", methods=["GET"])
 @login_required
 def manage_accounts():
-    if current_user.UserRole != "Admin":
+    if current_user.userRole != "Admin":
         return redirect(url_for('.index'))
 
     users = db.session.query(Users).all()
@@ -139,12 +139,12 @@ def manage_accounts():
 @app.route("/make/admin/<userId>", methods=["GET"])
 @login_required
 def make_admin(userId):
-    if current_user.UserRole != "Admin":
+    if current_user.userRole != "Admin":
         return redirect(url_for('.index'))
 
     user = db.session.query(Users).filter_by(id=userId).first()
-    user.UserRole = "Admin"
-    user.LastUpdatedAt = datetime.utcnow()
+    user.userRole = "Admin"
+    user.lastUpdatedAt = datetime.utcnow()
     save_data()
     return redirect(url_for(".manage_accounts", userId=userId))
 
@@ -152,14 +152,14 @@ def make_admin(userId):
 @app.route("/remove/admin/<userId>", methods=["GET"])
 @login_required
 def remove_admin(userId):
-    if current_user.UserRole != "Admin":
+    if current_user.userRole != "Admin":
         return redirect(url_for('.index'))
 
     # check if more than 1 admin exists if not then redirect user to manage_accounts page without any chances
     if (len(db.session.query(Users).filter_by(userRole="Admin").all()) > 1):
         user = db.session.query(Users).filter_by(id=userId).first()
-        user.UserRole = "Standard"
-        user.LastUpdatedAt = datetime.utcnow()
+        user.userRole = "Standard"
+        user.lastUpdatedAt = datetime.utcnow()
         save_data()
     return redirect(url_for(".manage_accounts"))
 
@@ -178,11 +178,11 @@ def profile(userId):
 def add_skill(userId):
     if request.method == "POST":
         skill = Skills(
-            UserId=userId,
-            SkillName=request.form.get("new_skill_name"),
-            SkillRating=request.form.get("new_skill_rating")
+            userId=userId,
+            skillName=request.form.get("new_skill_name"),
+            skillRating=request.form.get("new_skill_rating")
         )
-        db.session.query(Users).filter_by(id=userId).update({'LastUpdatedAt': datetime.utcnow()})
+        db.session.query(Users).filter_by(id=userId).update({'lastUpdatedAt': datetime.utcnow()})
         save_data(skill)
         return redirect(url_for(".profile", userId=userId))
     else:
@@ -193,7 +193,7 @@ def add_skill(userId):
 @login_required
 def delete_skill(userId, skillId):
     db.session.query(Skills).filter_by(id=skillId).delete()
-    db.session.query(Users).filter_by(id=userId).update({'LastUpdatedAt': datetime.utcnow()})
+    db.session.query(Users).filter_by(id=userId).update({'lastUpdatedAt': datetime.utcnow()})
     save_data()
     return redirect(url_for(".profile", userId=userId))
 
@@ -205,17 +205,17 @@ def update_comment(userId):
         if not db.session.query(Comments).filter_by(userId=userId).first():
             comment = Comments(
                 userId=userId,
-                Comments=request.form.get("comment")
+                comments=request.form.get("comment")
             )
             db.session.add(comment)
         else:
             if request.form.get("comment"):
                 userComment = db.session.query(
                     Comments).filter_by(userId=userId).first()
-                userComment.Comments = request.form.get("comment")
+                userComment.comments = request.form.get("comment")
             else:
                 db.session.query(Comments).filter_by(userId=userId).delete()
-        db.session.query(Users).filter_by(id=userId).update({'LastUpdatedAt': datetime.utcnow()})
+        db.session.query(Users).filter_by(id=userId).update({'lastUpdatedAt': datetime.utcnow()})
         save_data()
         return redirect(url_for(".profile", userId=userId))
     else:
@@ -228,6 +228,6 @@ def update_comment(userId):
 @login_required
 def delete_comment(userId):
     db.session.query(Comments).filter_by(userId=userId).delete()
-    db.session.query(Users).filter_by(id=userId).update({'LastUpdatedAt': datetime.utcnow()})
+    db.session.query(Users).filter_by(id=userId).update({'lastUpdatedAt': datetime.utcnow()})
     save_data()
     return redirect(url_for(".profile", userId=userId))

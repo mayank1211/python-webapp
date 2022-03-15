@@ -25,10 +25,10 @@
                             </div>
                             <textarea class="nhsuk-textarea" id="comment" name="comment" rows="5"
                                 aria-describedby="comments-hint"
-                                spellcheck="true">{{ currentComment.Comments }}</textarea>
+                                spellcheck="true">{{ currentComment.comments }}</textarea>
                         </div>
 
-                        {% if currentComment.Comments %}
+                        {% if currentComment.comments %}
                         <a style="float: left; display: inline-block; background-color: #d5281b;" class="nhsuk-button"
                             href="/delete_comment/{{ userId }}">
                             <span class="nhsuk-action-link__text">Delete comment</span>

@@ -16,25 +16,25 @@
         <dl class="nhsuk-summary-list">
           <div class="nhsuk-summary-list__row">
             <dt class="nhsuk-summary-list__key">
-              {{ user.Name }}
+              {{ user.name }}
             </dt>
             <dd class="nhsuk-summary-list__value">
-              {{ user.Email }}
+              {{ user.email }}
             </dd>
             <dd class="nhsuk-summary-list__actions">
-              {% if user.UserRole == "Admin" %}
-              <a href="/remove/admin/{{ user.Id }}">
+              {% if user.userRole == "Admin" %}
+              <a href="/remove/admin/{{ user.id }}">
                 Remove admin privileges<span class="nhsuk-u-visually-hidden"> Remove admin privileges</span>
               </a>
               {% else %}
-              <a href="/make/admin/{{ user.Id }}">
+              <a href="/make/admin/{{ user.id }}">
                 Give admin privileges<span class="nhsuk-u-visually-hidden"> Give admin privileges</span>
               </a>
               {% endif %}
 
               <br>
 
-              <a href="/delete/account/{{ user.Id }}">
+              <a href="/delete/account/{{ user.id }}">
                 Delete user profile<span class="nhsuk-u-visually-hidden"> Delete user profile</span>
               </a>
             </dd>
