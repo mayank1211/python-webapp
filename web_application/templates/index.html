@@ -27,38 +27,38 @@
             <h1 id="title">{{ title }}</h1>
             <div class="nhsuk-grid-column-one-thirds">
                 {% for user in users %}
-                    <div>
-                        <section style="float: left;">
-                            <img src="https://cdn.dribbble.com/users/3294839/screenshots/14567472/media/524efe16b803e0d913d725c120b0cb46.jpg?compress=1&resize=1600x1200&vertical=top"
-                                style="object-fit:cover; border-radius:50%; height:150px; width:150px">
+                <div>
+                    <section style="float: left;">
+                        <img src="https://cdn.dribbble.com/users/3294839/screenshots/14567472/media/524efe16b803e0d913d725c120b0cb46.jpg?compress=1&resize=1600x1200&vertical=top"
+                            style="object-fit:cover; border-radius:50%; height:150px; width:150px">
 
-                            <p class="nhsuk-card__description">{{ user.Name }}</p>
-                            <p class="nhsuk-card__description">Role: {{ user.JobRole }}</p>
-                            <a class="nhsuk-button" href="/profile/{{ user.Id }}">
-                                View Profile
-                            </a>
-                        </section>
-                        <aside style="float: right;">
-                            <h3 class="nhsuk-card__description">
-                                Current team
-                            </h3>
-                            <p>{{ user.CurrentTeam }}</p>
-                            <h3 class="nhsuk-card__description">
-                                Current Skills
-                            </h3>
-                            <ul>
-                                {% set skill_sets_count = namespace(value=0) %}
-                                {% for skill in skills %}
-                                {% if skill.UserId == user.Id and skill_sets_count.value < 5 %} {% set
-                                    skill_sets_count.value=skill_sets_count.value + 1 %} <li>{{ skill.SkillName }} - {{
-                                    skill.SkillRating }} Out of 5</li>
-                                    {% endif %}
-                                    {% endfor %}
-                            </ul>
-                        </aside>
-                    </div>
+                        <p class="nhsuk-card__description">{{ user.name }}</p>
+                        <p class="nhsuk-card__description">Role: {{ user.jobRole }}</p>
+                        <a class="nhsuk-button" href="/profile/{{ user.id }}">
+                            View Profile
+                        </a>
+                    </section>
+                    <aside style="float: right;">
+                        <h3 class="nhsuk-card__description">
+                            Current team
+                        </h3>
+                        <p>{{ user.currentTeam }}</p>
+                        <h3 class="nhsuk-card__description">
+                            Current Skills
+                        </h3>
+                        <ul>
+                            {% set skill_sets_count = namespace(value=0) %}
+                            {% for skill in skills %}
+                                {% if skill.userId == user.id and skill_sets_count.value < 5 %} 
+                                    {% set skill_sets_count.value=skill_sets_count.value + 1 %} 
+                                    <li>{{ skill.skillName }} - {{skill.skillRating }} Out of 5</li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </aside>
+                </div>
 
-                    <br><br><br><br><br>
+                <br><br><br><br><br>
                 {% endfor %}
             </div>
         </div>

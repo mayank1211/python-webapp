@@ -7,8 +7,9 @@ from flask_login import LoginManager
 import flask_monitoringdashboard as dashboard
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///flask.db"
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///flask_app.db"
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+app.config['SQLALCHEMY_ECHO'] = False
 app.secret_key = os.environ.get("SECRET_KEY")
 # Initialize SQLAlchemy connection with sqlite database locally
 db = SQLAlchemy(app)
@@ -34,5 +35,7 @@ def unauthorized_callback():
 # Import routes and create_database_and_data function from models.py to create tables and users.
 import routes
 from models import create_database_and_data
+# Destroy all the existing tables from the database.
+db.drop_all()
 # Call function from models.py file to required create tables and users
 create_database_and_data()

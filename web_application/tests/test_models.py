@@ -37,50 +37,50 @@ class TestModels(TestBase):
         """
         Test single admin account added to Users table
         """
-        adminUser = Users.query.filter_by(UserRole="Admin").all()
+        adminUser = Users.query.filter_by(userRole="Admin").all()
         
         self.assertEqual(len(adminUser), 1)
-        self.assertEqual(adminUser[0].Name, "Mayank Patel")
-        self.assertEqual(adminUser[0].Email, "mayank.patel@admin.com")
-        self.assertEqual(adminUser[0].JobRole, "Software Developer")
-        self.assertEqual(adminUser[0].UserRole, "Admin")
-        self.assertEqual(adminUser[0].CurrentTeam, "NHS.UK - Service Profiles")
+        self.assertEqual(adminUser[0].name, "Mayank Patel")
+        self.assertEqual(adminUser[0].email, "mayank.patel@admin.com")
+        self.assertEqual(adminUser[0].jobRole, "Software Developer")
+        self.assertEqual(adminUser[0].userRole, "Admin")
+        self.assertEqual(adminUser[0].currentTeam, "NHS.UK - Service Profiles")
 
     def test_standard_user_model(self):
         """
         Test single standard account added to Users table
         """
-        standardUser = Users.query.filter_by(UserRole="Standard").all()
+        standardUser = Users.query.filter_by(userRole="Standard").all()
         
         self.assertEqual(len(standardUser), 1)
-        self.assertEqual(standardUser[0].Name, "Mayank Patel Standard")
-        self.assertEqual(standardUser[0].Email, "mayank.patel@standard.com")
-        self.assertEqual(standardUser[0].JobRole, "Software Developer - Standard")
-        self.assertEqual(standardUser[0].UserRole, "Standard")
-        self.assertEqual(standardUser[0].CurrentTeam, "NHS.UK - Service Profiles")
+        self.assertEqual(standardUser[0].name, "Mayank Patel Standard")
+        self.assertEqual(standardUser[0].email, "mayank.patel@standard.com")
+        self.assertEqual(standardUser[0].jobRole, "Software Developer - Standard")
+        self.assertEqual(standardUser[0].userRole, "Standard")
+        self.assertEqual(standardUser[0].currentTeam, "NHS.UK - Service Profiles")
 
     def test_skills_model(self):
         """
         Test single skill added to admin account
         """
-        userSkill = Skills.query.filter_by(UserId=2).all()
+        userSkill = Skills.query.filter_by(userId=2).all()
         
         self.assertEqual(len(userSkill), 2)
-        self.assertEqual(userSkill[0].Id, 1)
-        self.assertEqual(userSkill[0].UserId, 2)
-        self.assertEqual(userSkill[0].SkillName, "Kubernetes")
-        self.assertEqual(userSkill[0].SkillRating, 5)
+        self.assertEqual(userSkill[0].id, 1)
+        self.assertEqual(userSkill[0].userId, 2)
+        self.assertEqual(userSkill[0].skillName, "Kubernetes")
+        self.assertEqual(userSkill[0].skillRating, 5)
 
     def test_comments_model(self):
         """
         Test single comment added to admin account
         """
-        userComment = Comments.query.filter_by(UserId=2).all()
+        userComment = Comments.query.filter_by(userId=2).all()
         
         self.assertEqual(len(userComment), 1)
-        self.assertEqual(userComment[0].Id, 1)
-        self.assertEqual(userComment[0].UserId, 2)
-        self.assertEqual(userComment[0].Comments, "I also do performance testing for NHS.UK on varies Covid and Non-Covid related services.")
+        self.assertEqual(userComment[0].id, 1)
+        self.assertEqual(userComment[0].userId, 2)
+        self.assertEqual(userComment[0].comments, "I also do performance testing for NHS.UK on varies Covid and Non-Covid related services.")
 
 if __name__ == '__main__':
     unittest.main()
