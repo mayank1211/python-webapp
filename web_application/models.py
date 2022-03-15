@@ -16,86 +16,86 @@ def load_user(user_id):
 class Users(UserMixin, db.Model):
     """ User Model """
     __tablename__ = "users"
-    Id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    Name = db.Column(db.String(80), nullable=True)
-    Email = db.Column(db.String(120), nullable=True)
-    Password = db.Column(db.String(120), nullable=True)
-    JobRole = db.Column(db.String(100), nullable=True)
-    CurrentTeam = db.Column(db.String(100), nullable=True)
-    LastUpdatedAt = db.Column(db.DateTime, default=datetime.datetime.utcnow)
-    UserRole = db.Column(db.String(8), nullable=False, default="Standard")
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(80), nullable=True)
+    email = db.Column(db.String(120), nullable=True)
+    password = db.Column(db.String(120), nullable=True)
+    jobRole = db.Column(db.String(100), nullable=True)
+    currentTeam = db.Column(db.String(100), nullable=True)
+    lastUpdatedAt = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    userRole = db.Column(db.String(8), nullable=False, default="Standard")
 
     def get_id(self):
         """Return the user id to satisfy Flask-Login's requirements."""
-        return self.Id
+        return self.id
 
 
 class Skills(db.Model):
     """ Skills Model """
     __tablename__ = "skills"
-    Id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    UserId = db.Column(db.Integer, db.ForeignKey('users.Id'), nullable=False)
-    SkillName = db.Column(db.String(120), nullable=False)
-    SkillRating = db.Column(db.Integer, nullable=False)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    userId = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    skillName = db.Column(db.String(120), nullable=False)
+    skillRating = db.Column(db.Integer, nullable=False)
 
 
 class Comments(db.Model):
     """ Comments Model """
     __tablename__ = "comments"
-    Id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    UserId = db.Column(db.Integer, db.ForeignKey('users.Id'), nullable=False)
-    Comments = db.Column(db.String(120), nullable=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    userId = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    comments = db.Column(db.String(120), nullable=True)
 
 
 def create_database_and_data():
     db.create_all()
 
     adminUser = db.session.query(Users).filter_by(
-        Email="mayank.patel@admin.com").first()
+        email="mayank.patel@admin.com").first()
 
     standardUser = db.session.query(Users).filter_by(
-        Email="mayank.patel@standard.com").first()
+        email="mayank.patel@standard.com").first()
 
 
     if not standardUser:
         newUser = Users(
-            Name="Mayank Patel Standard",
-            Email="mayank.patel@standard.com",
-            Password=sha256_crypt.encrypt("standard"),
-            JobRole="Software Developer - Standard",
-            CurrentTeam="NHS.UK - Service Profiles",
+            name="Mayank Patel Standard",
+            email="mayank.patel@standard.com",
+            password=sha256_crypt.encrypt("standard"),
+            jobRole="Software Developer - Standard",
+            currentTeam="NHS.UK - Service Profiles",
         )
         db.session.add(newUser)
         db.session.commit()
 
     if not adminUser:
         newUser = Users(
-            Name="Mayank Patel",
-            Email="mayank.patel@admin.com",
-            Password=sha256_crypt.encrypt("admin"),
-            JobRole="Software Developer",
-            CurrentTeam="NHS.UK - Service Profiles",
-            UserRole="Admin",
+            name="Mayank Patel",
+            email="mayank.patel@admin.com",
+            password=sha256_crypt.encrypt("admin"),
+            jobRole="Software Developer",
+            currentTeam="NHS.UK - Service Profiles",
+            userRole="Admin",
         )
         db.session.add(newUser)
         db.session.commit()
 
         registeredUser = db.session.query(Users).filter_by(
-            Email="mayank.patel@admin.com").first()
+            email="mayank.patel@admin.com").first()
 
         skill_one = Skills(
-            UserId=registeredUser.Id,
-            SkillName="Kubernetes",
-            SkillRating=5
+            userId=registeredUser.id,
+            skillName="Kubernetes",
+            skillRating=5
         )
         skill_two = Skills(
-            UserId=registeredUser.Id,
-            SkillName="C# dotnet",
-            SkillRating=4
+            userId=registeredUser.id,
+            skillName="C# dotnet",
+            skillRating=4
         )
         comment = Comments(
-            UserId=registeredUser.Id,
-            Comments="I also do performance testing for NHS.UK on varies Covid and Non-Covid related services."
+            userId=registeredUser.id,
+            comments="I also do performance testing for NHS.UK on varies Covid and Non-Covid related services."
         )
 
         db.session.add(comment)

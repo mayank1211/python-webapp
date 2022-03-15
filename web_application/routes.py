@@ -13,7 +13,7 @@ from models import Users, Skills, Comments
 
 
 def find_user_with_email(email):
-    return db.session.query(Users).filter_by(Email=email).first()
+    return db.session.query(Users).filter_by(email=email).first()
 
 
 def save_data(*args):
@@ -92,14 +92,14 @@ def index():
 @app.route("/my/account/<userId>", methods=["GET"])
 @login_required
 def my_account(userId):
-    user = db.session.query(Users).filter_by(Id=userId).first()
+    user = db.session.query(Users).filter_by(id=userId).first()
     return render_template("my_account.html", title="Manage Your Profile", user=user)
 
 
 @app.route("/update/account/<userId>", methods=["GET", "POST"])
 @login_required
 def update_account(userId):
-    user = db.session.query(Users).filter_by(Id=userId).first()
+    user = db.session.query(Users).filter_by(id=userId).first()
     if request.method == "POST":
         user.Name = request.form.get("full_name")
         user.Email = request.form.get("email_address")
@@ -119,9 +119,9 @@ def update_account(userId):
 @login_required
 def delete_profile(userId):
     if int(userId) == current_user.Id or current_user.UserRole == "Admin":
-        db.session.query(Users).filter_by(Id=userId).delete()
-        db.session.query(Skills).filter_by(UserId=userId).delete()
-        db.session.query(Comments).filter_by(UserId=userId).delete()
+        db.session.query(Users).filter_by(id=userId).delete()
+        db.session.query(Skills).filter_by(userId=userId).delete()
+        db.session.query(Comments).filter_by(userId=userId).delete()
         save_data()
     return redirect(url_for(".index"))
 
@@ -142,7 +142,7 @@ def make_admin(userId):
     if current_user.UserRole != "Admin":
         return redirect(url_for('.index'))
 
-    user = db.session.query(Users).filter_by(Id=userId).first()
+    user = db.session.query(Users).filter_by(id=userId).first()
     user.UserRole = "Admin"
     user.LastUpdatedAt = datetime.utcnow()
     save_data()
@@ -156,8 +156,8 @@ def remove_admin(userId):
         return redirect(url_for('.index'))
 
     # check if more than 1 admin exists if not then redirect user to manage_accounts page without any chances
-    if (len(db.session.query(Users).filter_by(UserRole="Admin").all()) > 1):
-        user = db.session.query(Users).filter_by(Id=userId).first()
+    if (len(db.session.query(Users).filter_by(userRole="Admin").all()) > 1):
+        user = db.session.query(Users).filter_by(id=userId).first()
         user.UserRole = "Standard"
         user.LastUpdatedAt = datetime.utcnow()
         save_data()
@@ -167,9 +167,9 @@ def remove_admin(userId):
 @app.route("/profile/<userId>", methods=["GET"])
 @login_required
 def profile(userId):
-    user = db.session.query(Users).filter_by(Id=userId).first()
-    skills = db.session.query(Skills).filter_by(UserId=userId).all()
-    comment = db.session.query(Comments).filter_by(UserId=userId).first()
+    user = db.session.query(Users).filter_by(id=userId).first()
+    skills = db.session.query(Skills).filter_by(userId=userId).all()
+    comment = db.session.query(Comments).filter_by(userId=userId).first()
     return render_template("profile.html", title="User's profile", user=user, skills=skills, comment=comment)
 
 
@@ -182,7 +182,7 @@ def add_skill(userId):
             SkillName=request.form.get("new_skill_name"),
             SkillRating=request.form.get("new_skill_rating")
         )
-        db.session.query(Users).filter_by(Id=userId).update({'LastUpdatedAt': datetime.utcnow()})
+        db.session.query(Users).filter_by(id=userId).update({'LastUpdatedAt': datetime.utcnow()})
         save_data(skill)
         return redirect(url_for(".profile", userId=userId))
     else:
@@ -192,8 +192,8 @@ def add_skill(userId):
 @app.route("/delete_skill/<userId>/<skillId>", methods=["GET"])
 @login_required
 def delete_skill(userId, skillId):
-    db.session.query(Skills).filter_by(Id=skillId).delete()
-    db.session.query(Users).filter_by(Id=userId).update({'LastUpdatedAt': datetime.utcnow()})
+    db.session.query(Skills).filter_by(id=skillId).delete()
+    db.session.query(Users).filter_by(id=userId).update({'LastUpdatedAt': datetime.utcnow()})
     save_data()
     return redirect(url_for(".profile", userId=userId))
 
@@ -202,7 +202,7 @@ def delete_skill(userId, skillId):
 @login_required
 def update_comment(userId):
     if request.method == "POST":
-        if not db.session.query(Comments).filter_by(UserId=userId).first():
+        if not db.session.query(Comments).filter_by(userId=userId).first():
             comment = Comments(
                 userId=userId,
                 Comments=request.form.get("comment")
@@ -211,23 +211,23 @@ def update_comment(userId):
         else:
             if request.form.get("comment"):
                 userComment = db.session.query(
-                    Comments).filter_by(UserId=userId).first()
+                    Comments).filter_by(userId=userId).first()
                 userComment.Comments = request.form.get("comment")
             else:
-                db.session.query(Comments).filter_by(UserId=userId).delete()
-        db.session.query(Users).filter_by(Id=userId).update({'LastUpdatedAt': datetime.utcnow()})
+                db.session.query(Comments).filter_by(userId=userId).delete()
+        db.session.query(Users).filter_by(id=userId).update({'LastUpdatedAt': datetime.utcnow()})
         save_data()
         return redirect(url_for(".profile", userId=userId))
     else:
         currentComment = db.session.query(
-            Comments).filter_by(UserId=userId).first()
+            Comments).filter_by(userId=userId).first()
         return render_template("update_comment.html", title="Update User's Comments", userId=userId, currentComment=currentComment)
 
 
 @app.route("/delete_comment/<userId>", methods=["GET"])
 @login_required
 def delete_comment(userId):
-    db.session.query(Comments).filter_by(UserId=userId).delete()
-    db.session.query(Users).filter_by(Id=userId).update({'LastUpdatedAt': datetime.utcnow()})
+    db.session.query(Comments).filter_by(userId=userId).delete()
+    db.session.query(Users).filter_by(id=userId).update({'LastUpdatedAt': datetime.utcnow()})
     save_data()
     return redirect(url_for(".profile", userId=userId))
