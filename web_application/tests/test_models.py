@@ -5,7 +5,8 @@ from flask_testing import TestCase
 # Password hashing.
 from passlib.hash import sha256_crypt
 from run import app, db
-from models import create_database_and_data, Users, Skills, Comments
+from models import Users, Skills, Comments
+from create_data import create_database_and_data
 
 class TestBase(TestCase):
 

@@ -3,20 +3,14 @@ from flask import Flask, redirect, request, session
 from flask_sqlalchemy import SQLAlchemy
 from datetime import timedelta
 from flask_login import LoginManager
-# Flask log monitoring
-import flask_monitoringdashboard as dashboard
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///flask_app.db"
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URI")
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
 app.secret_key = os.environ.get("SECRET_KEY")
-# Initialize SQLAlchemy connection with sqlite database locally
+# Initialize SQLAlchemy connection with the database
 db = SQLAlchemy(app)
-
-# Initialize flask monitoring for debugging and analystics
-dashboard.config.init_from(file='/config.cfg')
-dashboard.bind(app)
 
 # Initialize flask login manager to authentication and sessions expiry
 login_manager = LoginManager(app)
@@ -32,10 +26,10 @@ login_manager.needs_refresh_message_category = "info"
 def unauthorized_callback():
     return redirect('/login?next=' + request.path)
 
-# Import routes and create_database_and_data function from models.py to create tables and users.
+# Import routes and create_database_and_data function from create_data.py to create tables and users.
 import routes
-from models import create_database_and_data
-# Destroy all the existing tables from the database.
-db.drop_all()
-# Call function from models.py file to required create tables and users
-create_database_and_data()
+from create_data import create_database_and_data
+# Delete/Drop existing table and re-create the tables with fresh temp data.
+with app.app_context():
+    # db.create_all()
+    create_database_and_data()

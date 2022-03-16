@@ -21,9 +21,7 @@ pip3 install -r requirements.txt
 FLASK_APP=./web_application/run.py
 FLASK_ENV=development
 SECRET_KEY=my_secrets
-SQLALCHEMY_DATABASE_URI="sqlite:///flask.db"
-SQLALCHEMY_TRACK_MODIFICATIONS=False
-HASHING_PASSWORD="unlockMe"
+DATABASE_URI= (Connection to your postgresDb. E.g: postgresql://mayankuser:mayankpassword@localhost/mayankdb)
 ```
 3. Start the application by running: `flask run`
 
