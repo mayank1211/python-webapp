@@ -119,9 +119,9 @@ def update_account(userId):
 @login_required
 def delete_profile(userId):
     if int(userId) == current_user.id or current_user.userRole == "Admin":
-        db.session.query(Users).filter_by(id=userId).delete()
         db.session.query(Skills).filter_by(userId=userId).delete()
         db.session.query(Comments).filter_by(userId=userId).delete()
+        db.session.query(Users).filter_by(id=userId).delete()
         save_data()
     return redirect(url_for(".index"))
 
